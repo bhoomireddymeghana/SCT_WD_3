@@ -1,0 +1,106 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; }
+    .quiz-container { background: #fff; max-width: 400px; margin: 40px auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);}
+    .question { font-weight: bold; margin-bottom: 12px;}
+    .option { margin: 8px 0; }
+    #result { font-weight: bold; margin-top: 16px;}
+    #next-btn { margin-top: 15px; }
+  </style>
+</head>
+<body>
+<div class="quiz-container">
+  <div id="quiz">
+    <div class="question" id="question"></div>
+    <div id="options"></div>
+    <button id="next-btn" onclick="nextQuestion()">Next</button>
+    <div id="result"></div>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    question: "What is the capital of France?",
+    options: ["Berlin", "Paris", "London", "Madrid"],
+    answer: 1
+  },
+  {
+    question: "Which element has the chemical symbol 'O'?",
+    options: ["Osmium", "Oxygen", "Gold", "Iron"],
+    answer: 1
+  },
+  {
+    question: "Who painted the Mona Lisa?",
+    options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Michelangelo"],
+    answer: 2
+  },
+  {
+    question: "Which planet is closest to the sun?",
+    options: ["Mars", "Venus", "Mercury", "Earth"],
+    answer: 2
+  },
+  {
+    question: "How many continents are there in the world?",
+    options: ["6", "7", "8", "5"],
+    answer: 1
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+function showQuestion() {
+  const q = questions[currentQuestion];
+  document.getElementById('question').innerText = q.question;
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = "";
+  q.options.forEach((opt, idx) => {
+    optionsDiv.innerHTML += `
+      <div class="option">
+        <input type="radio" name="option" id="opt${idx}" value="${idx}">
+        <label for="opt${idx}">${opt}</label>
+      </div>
+    `;
+  });
+  document.getElementById('result').innerHTML = "";
+  answered = false;
+}
+
+function nextQuestion() {
+  if (!answered) {
+    const selected = document.querySelector('input[name="option"]:checked');
+    if (!selected) {
+      document.getElementById('result').innerText = "Please select an option!";
+      return;
+    }
+    answered = true;
+    const answer = parseInt(selected.value);
+    if (answer === questions[currentQuestion].answer) {
+      document.getElementById('result').innerText = "Correct!";
+      score++;
+    } else {
+      document.getElementById('result').innerText = "Wrong! Correct answer: " + questions[currentQuestion].options[questions[currentQuestion].answer];
+    }
+    document.getElementById('next-btn').innerText = currentQuestion === questions.length - 1 ? "Finish" : "Next";
+    return;
+  }
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    showQuestion();
+    document.getElementById('next-btn').innerText = "Next";
+  } else {
+    document.getElementById('quiz').innerHTML = `
+      <h2>Quiz Completed!</h2>
+      <p>Your score is ${score} out of ${questions.length}.</p>
+    `;
+  }
+}
+
+showQuestion();
+</script>
+</body>
+</html>
